@@ -2,7 +2,7 @@
 framework: mocha
 preRun:
      command:
-        - yarn install
+        - yarn install --frozen-lockfile --non-interactive
 preMerge:
   pattern:
     - "./node-tests/blueprints/**/*-test.js"
