@@ -5,19 +5,21 @@
 import { get, set } from '@ember/-internals/metal';
 import * as environment from '@ember/-internals/browser-environment';
 import EngineInstance from '@ember/engine/instance';
-import Application from './lib/application';
+import type Application from './lib/application';
 import { renderSettled } from '@ember/-internals/glimmer';
-import { BootEnvironment } from '@ember/-internals/glimmer/lib/views/outlet';
+import type { BootEnvironment } from '@ember/-internals/glimmer/lib/views/outlet';
 import { assert } from '@ember/debug';
 import { Router } from '@ember/-internals/routing';
-import { EventDispatcher, ViewMixin } from '@ember/-internals/views';
-import { Registry } from '@ember/-internals/container';
+import type { ViewMixin } from '@ember/-internals/views';
+import { EventDispatcher } from '@ember/-internals/views';
+import type { Registry } from '@ember/-internals/container';
+import type { SimpleElement } from '@simple-dom/interface';
 
 export interface BootOptions {
   isBrowser?: boolean;
   shouldRender?: boolean;
   document?: Document | null;
-  rootElement?: string | Element | null;
+  rootElement?: string | SimpleElement | null;
   location?: string | null;
   // Private?
   isInteractive?: boolean;
@@ -65,7 +67,9 @@ class ApplicationInstance extends EngineInstance {
     @private
     @property {String|DOMElement} rootElement
   */
-  rootElement: string | Element | null = null;
+  rootElement: string | Element | SimpleElement | null = null;
+
+  declare customEvents: Record<string, string | null> | null;
 
   init(properties: object | undefined) {
     super.init(properties);
@@ -214,6 +218,12 @@ class ApplicationInstance extends EngineInstance {
     let instanceCustomEvents = get(this, 'customEvents');
 
     let customEvents = Object.assign({}, applicationCustomEvents, instanceCustomEvents);
+    assert(
+      '[BUG] Tried to set up dispatcher with an invalid root element',
+      this.rootElement === null ||
+        typeof this.rootElement === 'string' ||
+        this.rootElement instanceof Element
+    );
     dispatcher.setup(customEvents, this.rootElement);
 
     return dispatcher;
@@ -447,7 +457,7 @@ class _BootOptions {
     @default null
     @public
   */
-  readonly rootElement?: string | Element;
+  readonly rootElement?: string | SimpleElement;
 
   constructor(options: BootOptions = {}) {
     this.isInteractive = Boolean(environment.hasDOM); // This default is overridable below

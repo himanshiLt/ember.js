@@ -1,16 +1,21 @@
 # Ember Changelog
 
-## v3.28.9 (April 19, 2022)
+### v4.5.0-beta.1 (May 2, 2022)
 
-- [#20028](https://github.com/emberjs/ember.js/pull/20028) Fix a memory leak in the Router Service class
+- [#20052](https://github.com/emberjs/ember.js/pull/20052) / [#20055](https://github.com/emberjs/ember.js/pull/20055) [FEATURE] Add the default helper manager to implement [RFC #0756](https://github.com/emberjs/rfcs/blob/master/text/0756-helper-default-manager.md).
+- [#20053](https://github.com/emberjs/ember.js/pull/20053) [FEATURE] Expose `renderSettled` from `@ember/renderer` to enable implementation of [RFC #0785](https://github.com/emberjs/rfcs/blob/master/text/0785-remove-set-get-in-tests.md).
 
-### v4.4.0-beta.1 (March 24, 2022)
+### v4.4.0 (May 2, 2022)
 
 - [#19882](https://github.com/emberjs/ember.js/pull/19882) / [#20005](https://github.com/emberjs/ember.js/pull/20005) [FEATURE] Implement the `unique-id` helper per [RFC #0659](https://github.com/emberjs/rfcs/blob/master/text/0659-unique-id-helper.md).
 - [#19981](https://github.com/emberjs/ember.js/pull/19981) [FEATURE] Facilitate custom test setups per [RFC #0637](https://github.com/emberjs/rfcs/blob/master/text/0637-customizable-test-setups.md).
 - [#16879](https://github.com/emberjs/ember.js/pull/16879) [BUGFIX] isEmpty on nested objects
 - [#17978](https://github.com/emberjs/ember.js/pull/17978) Make hasListeners public
 - [#20014](https://github.com/emberjs/ember.js/pull/20014) Log `until` for deprecations
+
+### v3.28.9 (April 19, 2022)
+
+- [#20028](https://github.com/emberjs/ember.js/pull/20028) Fix a memory leak in the Router Service class
 
 ### v4.3.0 (March 21, 2022)
 

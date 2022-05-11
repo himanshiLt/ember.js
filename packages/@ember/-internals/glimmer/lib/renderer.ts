@@ -1,16 +1,16 @@
 import { privatize as P } from '@ember/-internals/container';
 import { ENV } from '@ember/-internals/environment';
-import { getOwner, Owner } from '@ember/-internals/owner';
+import type { Owner } from '@ember/-internals/owner';
+import { getOwner } from '@ember/-internals/owner';
 import { guidFor } from '@ember/-internals/utils';
 import { getViewElement, getViewId } from '@ember/-internals/views';
 import { assert } from '@ember/debug';
 import { _backburner, _getCurrentRunLoop } from '@ember/runloop';
 import { destroy } from '@glimmer/destroyable';
 import { DEBUG } from '@glimmer/env';
-import {
+import type {
   Bounds,
   CompileTimeCompilationContext,
-  CurriedType,
   Cursor,
   DebugRenderTree,
   DynamicScope as GlimmerDynamicScope,
@@ -22,12 +22,14 @@ import {
   Template,
   TemplateFactory,
 } from '@glimmer/interfaces';
+import { CurriedType } from '@glimmer/interfaces';
 import { programCompilationContext } from '@glimmer/opcode-compiler';
 import { artifacts } from '@glimmer/program';
-import { createConstRef, Reference, UNDEFINED_REFERENCE, valueForRef } from '@glimmer/reference';
+import type { Reference } from '@glimmer/reference';
+import { createConstRef, UNDEFINED_REFERENCE, valueForRef } from '@glimmer/reference';
+import type { CurriedValue } from '@glimmer/runtime';
 import {
   clientBuilder,
-  CurriedValue,
   curry,
   DOMChanges,
   DOMTreeConstruction,
@@ -37,16 +39,16 @@ import {
 } from '@glimmer/runtime';
 import { unwrapTemplate } from '@glimmer/util';
 import { CURRENT_TAG, validateTag, valueForTag } from '@glimmer/validator';
-import { SimpleDocument, SimpleElement, SimpleNode } from '@simple-dom/interface';
+import type { SimpleDocument, SimpleElement, SimpleNode } from '@simple-dom/interface';
 import RSVP from 'rsvp';
-import Component from './component';
+import type Component from './component';
 import { BOUNDS } from './component-managers/curly';
 import { createRootOutlet } from './component-managers/outlet';
 import { RootComponentDefinition } from './component-managers/root';
 import { NodeDOMTreeConstruction } from './dom';
 import { EmberEnvironmentDelegate } from './environment';
 import ResolverImpl from './resolver';
-import { OutletState } from './utils/outlet';
+import type { OutletState } from './utils/outlet';
 import OutletView from './views/outlet';
 
 export type IBuilder = (env: Environment, cursor: Cursor) => ElementBuilder;
@@ -85,6 +87,8 @@ export class DynamicScope implements GlimmerDynamicScope {
     return value;
   }
 }
+
+const NO_OP = () => {};
 
 // This wrapper logic prevents us from rerendering in case of a hard failure
 // during render. This prevents infinite revalidation type loops from occuring,
@@ -218,10 +222,6 @@ function loopBegin(): void {
   }
 }
 
-function K() {
-  /* noop */
-}
-
 let renderSettledDeferred: RSVP.Deferred<void> | null = null;
 /*
   Returns a promise which will resolve when rendering has settled. Settled in
@@ -239,7 +239,7 @@ export function renderSettled() {
     // a chance to resolve (because its resolved in backburner's "end" event)
     if (!_getCurrentRunLoop()) {
       // ensure a runloop has been kicked off
-      _backburner.schedule('actions', null, K);
+      _backburner.schedule('actions', null, NO_OP);
     }
   }
 
@@ -266,7 +266,7 @@ function loopEnd() {
         throw new Error('infinite rendering invalidation detected');
       }
       loops++;
-      return _backburner.join(null, K);
+      return _backburner.join(null, NO_OP);
     }
   }
   loops = 0;

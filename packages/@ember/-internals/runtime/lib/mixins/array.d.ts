@@ -1,7 +1,7 @@
-import { Mixin } from '@ember/-internals/metal';
-import { AnyFn } from '@ember/-internals/utils/types';
-import Enumerable from './enumerable';
-import MutableEnumerable from './mutable_enumerable';
+import type { Mixin } from '@ember/-internals/metal';
+import type { AnyFn } from '@ember/-internals/utils/types';
+import type Enumerable from './enumerable';
+import type MutableEnumerable from './mutable_enumerable';
 
 type Value<T, K extends string> = K extends keyof T ? T[K] : unknown;
 
@@ -26,27 +26,27 @@ interface EmberArray<T> extends Enumerable {
   ): NativeArray<U>;
   mapBy<K extends string>(key: K): NativeArray<Value<T, K>>;
   filter<Target>(
-    callback: (this: Target, item: T, index: number, arr: this) => boolean,
+    callback: (this: Target, item: T, index: number, arr: this) => unknown,
     target?: Target
   ): NativeArray<T>;
   reject<Target>(
-    callback: (this: Target, item: T, index: number, arr: this) => boolean,
+    callback: (this: Target, item: T, index: number, arr: this) => unknown,
     target?: Target
   ): NativeArray<T>;
   filterBy(key: string): NativeArray<T>;
   rejectBy(key: string): NativeArray<T>;
   find<Target = void>(
-    callback: (this: Target, item: T, index: number, arr: this) => boolean,
+    callback: (this: Target, item: T, index: number, arr: this) => unknown,
     target?: Target
   ): T | undefined;
   findBy<K extends string>(key: K, value?: Value<T, K>): T | undefined;
   every<Target = void>(
-    callback: (this: Target, item: T, index: number, arr: this) => boolean,
+    callback: (this: Target, item: T, index: number, arr: this) => unknown,
     target?: Target
   ): boolean;
   isEvery<K extends string>(key: K, value?: Value<T, K>): boolean;
   any<Target = void>(
-    callback: (this: Target, item: T, index: number, arr: this) => boolean,
+    callback: (this: Target, item: T, index: number, arr: this) => unknown,
     target?: Target
   ): boolean;
   isAny<K extends string>(key: K, value?: Value<T, K>): boolean;
@@ -103,5 +103,8 @@ export function A<A>(arr: A): A extends Array<infer V> ? NativeArray<V> : Native
 export function A<T>(): NativeArray<T>;
 
 export function removeAt<T>(array: T[] | EmberArray<T>, start: number, len: number): EmberArray<T>;
-export function uniqBy<T>(array: T[], keyOrFunc: string | ((item: T) => unknown)): T[];
+export function uniqBy<T>(
+  array: T[] | EmberArray<T>,
+  keyOrFunc: string | ((item: T) => unknown)
+): T[] | EmberArray<T>;
 export function isArray(obj: unknown): boolean;

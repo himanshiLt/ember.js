@@ -11,7 +11,8 @@ import {
   set,
   setProperties,
 } from '@ember/-internals/metal';
-import { getOwner, Owner } from '@ember/-internals/owner';
+import type { Owner } from '@ember/-internals/owner';
+import { getOwner } from '@ember/-internals/owner';
 import { BucketCache } from '@ember/-internals/routing';
 import {
   A as emberA,
@@ -21,36 +22,34 @@ import {
   typeOf,
 } from '@ember/-internals/runtime';
 import { isProxy, lookupDescriptor } from '@ember/-internals/utils';
-import { AnyFn } from '@ember/-internals/utils/types';
+import type { AnyFn } from '@ember/-internals/utils/types';
 import Controller from '@ember/controller';
-import { ControllerQueryParamType } from '@ember/controller/lib/controller_mixin';
+import type { ControllerQueryParamType } from '@ember/controller/lib/controller_mixin';
 import { assert, info, isTesting } from '@ember/debug';
 import EngineInstance from '@ember/engine/instance';
 import { dependentKeyCompat } from '@ember/object/compat';
 import { once } from '@ember/runloop';
 import { DEBUG } from '@glimmer/env';
-import { Template, TemplateFactory } from '@glimmer/interfaces';
-import {
+import type { Template, TemplateFactory } from '@glimmer/interfaces';
+import type {
   InternalRouteInfo,
   ModelFor,
-  PARAMS_SYMBOL,
   Route as IRoute,
-  STATE_SYMBOL,
   Transition,
   TransitionState,
 } from 'router_js';
+import { PARAMS_SYMBOL, STATE_SYMBOL } from 'router_js';
+import type { ExpandedControllerQueryParam, NamedRouteArgs, RouteArgs } from '../utils';
 import {
   calculateCacheKey,
   deprecateTransitionMethods,
-  ExpandedControllerQueryParam,
-  NamedRouteArgs,
   normalizeControllerQueryParams,
   prefixRouteNameArg,
-  RouteArgs,
   stashParamNames,
 } from '../utils';
 import generateController from './generate_controller';
-import EmberRouter, { QueryParam } from './router';
+import type { QueryParam } from './router';
+import EmberRouter from './router';
 
 export interface ExtendedInternalRouteInfo<R extends Route> extends InternalRouteInfo<R> {
   _names?: unknown[];
@@ -430,27 +429,27 @@ class Route<T = unknown>
   >;
 
   /**
-    The name of the template to use by default when rendering this routes
+    The name of the template to use by default when rendering this route's
     template.
 
     ```app/routes/posts/list.js
     import Route from '@ember/routing/route';
 
-    export default class extends Route {
-      templateName = 'posts/list'
-    });
+    export default class PostsListRoute extends Route {
+      templateName = 'posts/list';
+    }
     ```
 
     ```app/routes/posts/index.js
-    import PostsList from '../posts/list';
+    import PostsListRoute from '../posts/list';
 
-    export default class extends PostsList {};
+    export default class PostsIndexRoute extends PostsListRoute {};
     ```
 
     ```app/routes/posts/archived.js
-    import PostsList from '../posts/list';
+    import PostsListRoute from '../posts/list';
 
-    export default class extends PostsList {};
+    export default class PostsArchivedRoute extends PostsListRoute {};
     ```
 
     @property templateName
